@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script defer src = "script.js" ></script>
+    
+
+</head>
+<body>
+    <head>
+        <h1 class = "storage-header">
+            Storage
+        </h1>
+        <span class = "storage-items-amount" id = "storage-items-amount">
+            current items amount:
+        </span>
+
+        <div class = "buttons-list">
+            <button class = "actionBUtton showAll" onclick="showAllItems()">Show all Items</button>
+            <button class = "actionBUtton showCategories" onclick="writeCats()">Show categories</button>
+            <button class = "actionBUtton filter1cat" onclick="write1cat()">Show 1 category</button>
+        </div>
+
+        <ul class = "items-list" id = "items-list">
+        </ul>
+        <ul class = "cats" id = "cats"></ul>
+        <div class = "cat" id = "cat"></div>
+    </head>
+
+</body>
+</html>

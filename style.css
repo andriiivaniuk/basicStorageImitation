@@ -1,0 +1,101 @@
+.storage-header{
+    text-align: center;
+}
+
+.storage-items-amount{
+    display: block;
+    text-align: center;
+}
+
+.items-list{
+    padding: 5px;
+    font-size: 1.4em;
+}
+
+.categories{
+    margin-left: 40px;
+    font-weight: 300;
+}
+
+.names{
+    margin: 5px;
+    font-weight: 300;
+}
+
+.prices{
+    margin-left: 60px;
+    font-weight: 500;
+}
+
+.hidden{
+    visibility: hidden;
+}
+
+.visible{
+    visibility: visible;
+}
+
+.selected-cat-hidden > li {
+    display: none;
+}
+
+.selected-cat-shown > li {
+    display: block;
+}
+
+.buttons-list{
+    display: flex;
+    justify-content:center;
+}
+
+.actionBUtton{
+    height: 40px;
+    margin: 10px;
+    width: 150px;
+}
+
+.active-button{
+    background-color: greenyellow;
+}
+
+.cat{
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.cats-header{
+    text-align: center;
+    cursor: pointer;
+    text-decoration: underline;
+    position: relative;
+    display: block;
+    width: fit-content;
+}
+
+.apply-button{
+    margin: 10px;
+    border-radius: 4px;
+    font-size: 1.2em;
+}
+
+.arrow-header{
+    display: block;
+    height: 20px;
+    width: 20px;
+    transition: 0.3s;
+    position: absolute;
+    right: -40px;
+    bottom: 5px;
+}
+
+.arrow-header-rotate{
+    transform: rotate(180deg);
+}
+
+.category-header{
+    cursor: pointer;
+    position: relative;
+    display: block;
+    width: fit-content;
+}
+
