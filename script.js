@@ -79,35 +79,153 @@ const showCats = (arr) => {
 
 const init = () => {
 
+    showAll(0);
+
     currentState[0] = true;
 
-    for(items in storage){
+    checkButtons();
+}
 
-        let newLi = document.createElement("li");
-
-        let newLi_name = document.createElement("span");
-        newLi_name.innerHTML += +items+1 + ". " + storage[items].name;
-        newLi_name.classList.add("names");
-        newLi.innerHTML += newLi_name.outerHTML;
-
-        let newLi_price = document.createElement("span");
-        newLi_price.innerHTML += "price: " + storage[items].price + "$";
-        newLi_price.classList.add("prices");
-        newLi.innerHTML += newLi_price.outerHTML;
-
-        let newLi_cats = document.createElement("span");
-        newLi_cats.innerHTML += "categories: " + storage[items].catList;
-        newLi_cats.classList.add("categories");
-        newLi.innerHTML += newLi_cats.outerHTML;
-
-        newLi.classList.add("list");
-
-        document.getElementById("items-list").innerHTML += newLi.outerHTML;
+//num in showAll is quick fix for 2 states: 0 --- when nothing was changed, 1 --- when item was added and we have to re-write the container
+const showAll = (num) => {
+    
+    if(num === 0){
+        if(currentState[0]){
+            return;
+        }
     }
 
+    setCurrentState(0);
+    document.getElementById("storage-items-amount").innerHTML = "curent amount of original items: " + storage.length;
+    
+    for(items in storage){
+
+        let newLi = createShownElem(items);
+        document.getElementById("items-list").innerHTML += newLi.outerHTML;
+
+    }
+
+    document.getElementById("items-list").innerHTML += createAddItemButton().outerHTML;
     document.getElementById("cats").addEventListener("click", clickCatHandler);
-    document.getElementById("storage-items-amount").innerHTML += storage.length;
-    checkButtons();
+}
+
+const createAddItemButton = () => {
+    let newBut = document.createElement("button");
+    newBut.innerText = "Add item";
+    newBut.classList.add("add-item-but");
+    document.getElementById("items-list").innerHTML += newBut.outerHTML;
+    newBut.setAttribute("onclick", "addItemToStorage()");
+
+    return newBut;
+}
+
+const addItemToStorage = () => {
+    createModalWindow();
+}
+
+const createModalWindow = () => {
+    let modal = document.createElement("div");
+    modal.classList.add("modal-window-adding-item");
+
+    let modalBack = document.createElement("div");
+    modalBack.classList.add("modal-back");
+
+    modal.innerHTML = `
+        <ul class = "input-panel">
+            <li class = "input-field-set">
+                <span class = "input-field-title">Name (ID): </span>
+                <input type = text class = "modal-input" id = "modal-input-name">
+            </li>
+            <li class = "input-field-set">
+                <span class = "input-field-title">Price: </span>
+                <input type = number class = "modal-input" id = "modal-input-price">
+            </li>
+            <li class = "input-field-set">
+                <span class = "input-field-title">Category: </span>
+                <input type = text class = "modal-input" id = "modal-input-cat0">
+            </li>
+            <li class = "input-field-set">
+                <span class = "input-field-title">Category 2 (optional): </span>
+                <input type = text class = "modal-input" id = "modal-input-cat1">
+            </li>
+            <li class = "input-field-set">
+                <span class = "input-field-title">Category 3 (optional): </span>
+                <input type = text class = "modal-input" id = "modal-input-cat2">
+            </li>
+
+            <div class = "modal-buttons-set">
+                <button class = "modal-button" id = "add-item-button">
+                    Add
+                </button>
+                <button class = "modal-button" id = "cancel-button">
+                    Cancel
+                </button>
+            </div>
+        </ul>
+        
+    `
+
+    document.querySelector("body").prepend(modal);
+    document.querySelector("body").prepend(modalBack);
+
+    document.querySelector(".modal-buttons-set").addEventListener("click", modalButtonClick);
+}
+
+const modalButtonClick = (e) => {
+    if(e.target.id === "add-item-button"){
+
+        let categories = new Set();
+        categories.add(...[document.getElementById("modal-input-cat0").value,
+        document.getElementById("modal-input-cat1").value,
+        document.getElementById("modal-input-cat2").value]);
+
+        categories = categories.size > 1 ? Array.from(categories) : categories.values().next().value;
+
+        let newItem = {
+            name: document.getElementById("modal-input-name").value,
+            price: document.getElementById("modal-input-price").value,
+            catList: [categories]
+        };
+
+        storage.push(newItem);
+
+        alert("new item added!");
+
+        document.querySelector(".modal-back").remove();
+        document.querySelector(".modal-window-adding-item").remove();
+
+        document.getElementById("items-list").innerHTML = "";
+        
+        showAll(1);
+
+    }
+
+    if(e.target.id === "cancel-button"){
+        document.querySelector(".modal-back").remove();
+        document.querySelector(".modal-window-adding-item").remove();
+    }
+}
+
+const createShownElem = (items) => {
+
+    let newLi = document.createElement("li");
+    let newLi_name = document.createElement("span");
+    newLi_name.innerHTML += +items+1 + ". " + storage[items].name;
+    newLi_name.classList.add("names");
+    newLi.innerHTML += newLi_name.outerHTML;
+
+    let newLi_price = document.createElement("span");
+    newLi_price.innerHTML += "price: " + storage[items].price + "$";
+    newLi_price.classList.add("prices");
+    newLi.innerHTML += newLi_price.outerHTML;
+
+    let newLi_cats = document.createElement("span");
+    newLi_cats.innerHTML += "categories: " + storage[items].catList;
+    newLi_cats.classList.add("categories");
+    newLi.innerHTML += newLi_cats.outerHTML;
+
+    newLi.classList.add("list");
+    return newLi;
 }
 
 const clickCatHandler = (e) => {
@@ -120,15 +238,6 @@ const clickCatHandler = (e) => {
     }
 }
 
-
-const showAllItems = () => {
-    if(currentState[0]){
-        return;
-    }
-    else{
-        setCurrentState(0);
-    }
-}
 
 const checkButtons = () => {
     let bucttons = document.getElementsByClassName("actionBUtton");
@@ -409,6 +518,10 @@ const setCurrentState = (num) => {
             document.getElementById("items-list").style.display = "block";
             document.getElementById("cats").style.display = "none";
             document.getElementById("cat").style.display = "none";
+
+            document.getElementById("cats").innerHTML = "";
+            document.getElementById("cat").innerHTML = "";
+
             break;
         case 1:
             currentState[0] = false;
@@ -417,6 +530,10 @@ const setCurrentState = (num) => {
             document.getElementById("items-list").style.display = "none";
             document.getElementById("cats").style.display = "block";
             document.getElementById("cat").style.display = "none";
+
+            document.getElementById("cat").innerHTML = "";
+            document.getElementById("items-list").innerHTML = "";
+
             break;
         case 2:
             currentState[0] = false;
@@ -425,6 +542,10 @@ const setCurrentState = (num) => {
             document.getElementById("items-list").style.display = "none";
             document.getElementById("cats").style.display = "none";
             document.getElementById("cat").style.display = "block";
+
+            document.getElementById("items-list").innerHTML = "";
+            document.getElementById("cats").innerHTML = "";
+
             break;
         default: return;
     }

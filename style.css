@@ -99,3 +99,64 @@
     width: fit-content;
 }
 
+.list{
+    
+}
+
+.add-item-but{
+    margin: 10px;
+    padding: 10px;
+    text-decoration: underline;
+}
+
+.modal-window-adding-item{
+    position: absolute;
+    top: 0; bottom: 0; right: 0; left: 0; margin: auto;
+    border-top: 30px cornflowerblue solid;
+    width: 400px;
+    height: fit-content;
+    background-color: whitesmoke;
+}
+
+.modal-back{
+    position: absolute;
+    width: 95%;
+    height: 95%; 
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.input-panel{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-field-set{
+    margin: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-field-title{
+    display: block;
+    flex-grow: 50%;
+}
+
+.modal-input{
+    font-size: 1.1em;
+    width: 200px;
+    min-width: 0px;
+    display: block;
+}
+
+.modal-buttons-set{
+    display: flex;
+    
+}
+
+.modal-button{
+    font-size: 1.1em;
+    padding: 10px;
+    margin: 10px;
+}
+
