@@ -142,15 +142,15 @@ const createModalWindow = () => {
             </li>
             <li class = "input-field-set">
                 <span class = "input-field-title">Category: </span>
-                <input type = text class = "modal-input" id = "modal-input-cat0">
+                <input type = text class = "modal-input category-input" id = "modal-input-cat0">
             </li>
             <li class = "input-field-set">
                 <span class = "input-field-title">Category 2 (optional): </span>
-                <input type = text class = "modal-input" id = "modal-input-cat1">
+                <input type = text class = "modal-input category-input" id = "modal-input-cat1">
             </li>
             <li class = "input-field-set">
                 <span class = "input-field-title">Category 3 (optional): </span>
-                <input type = text class = "modal-input" id = "modal-input-cat2">
+                <input type = text class = "modal-input category-input" id = "modal-input-cat2">
             </li>
 
             <div class = "modal-buttons-set">
@@ -174,17 +174,20 @@ const createModalWindow = () => {
 const modalButtonClick = (e) => {
     if(e.target.id === "add-item-button"){
 
-        let categories = new Set();
-        categories.add(...[document.getElementById("modal-input-cat0").value,
-        document.getElementById("modal-input-cat1").value,
-        document.getElementById("modal-input-cat2").value]);
+        let categories = [];
+        let values = [];
+        let inputValues = document.getElementsByClassName("category-input");
 
-        categories = categories.size > 1 ? Array.from(categories) : categories.values().next().value;
+        for(let i = 0; i < inputValues.length; i++){
+            if(inputValues[i].value !== ""){
+                values.push(inputValues[i].value);
+            }
+        }
 
         let newItem = {
             name: document.getElementById("modal-input-name").value,
             price: document.getElementById("modal-input-price").value,
-            catList: [categories]
+            catList: values.length > 1 ? [...values] : values
         };
 
         storage.push(newItem);
