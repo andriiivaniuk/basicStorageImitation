@@ -132,6 +132,7 @@ const createModalWindow = () => {
 
     modal.innerHTML = `
         <ul class = "input-panel">
+            <h1>Adding new item: </h1>
             <li class = "input-field-set">
                 <span class = "input-field-title">Name (ID): </span>
                 <input type = text class = "modal-input" id = "modal-input-name">
@@ -174,7 +175,6 @@ const createModalWindow = () => {
 const modalButtonClick = (e) => {
     if(e.target.id === "add-item-button"){
 
-        let categories = [];
         let values = [];
         let inputValues = document.getElementsByClassName("category-input");
 
@@ -184,9 +184,16 @@ const modalButtonClick = (e) => {
             }
         }
 
+        if(document.getElementById("modal-input-name").value === "" || values.length === 0 
+            || document.getElementById("modal-input-price").value === ""){
+            alert("you have to input nesessery fields");
+            return;
+        }
+        
+
         let newItem = {
             name: document.getElementById("modal-input-name").value,
-            price: document.getElementById("modal-input-price").value,
+            price: Number(document.getElementById("modal-input-price").value),
             catList: values.length > 1 ? [...values] : values
         };
 
