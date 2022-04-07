@@ -244,7 +244,7 @@ const clickCatHandler = (e) => {
         return;
     }
     if(e.target.classList.contains("category-header") || e.target.classList.contains("arrow-header")){
-        catClick(e.target.id[0]);
+        catClick(e.target.getAttribute("category-num"));
     }
 }
 
@@ -280,21 +280,21 @@ const allCatsCheck = () => {
 
     if(shoulOpenAll){
         for(ca of cats){
-            catClick(ca.id[ca.id.length-1]);
+            catClick(ca.getAttribute("category-num"));
         }
         return;
     }
 
     if(shouldHideAll){
         for(ca of cats){
-            catClick(ca.id[ca.id.length-1]);
+            catClick(ca.getAttribute("category-num"));
         }
         return;
     }
 
     for(ca of cats){
         if(ca.getAttribute("shown") === "false"){
-            catClick(ca.id[ca.id.length-1]);
+            catClick(ca.getAttribute("category-num"));
         }
     }
 }
@@ -402,12 +402,14 @@ const writeCats = () => {
         newUl.classList.add("category-list");
         newUl.id = "category-list " + i;
         newUl.setAttribute("shown", false);
+        newUl.setAttribute('category-num', i);
 
         let newUl_header = document.createElement("h1");
         newUl_header.innerHTML = +i+1 + ") " + cats[i].category;
-        newUl_header.classList.add("category-header")
+        newUl_header.classList.add("category-header");
+        newUl_header.setAttribute("category-num", i);
         newUl_header.id = +i + " " + cats[i].category + " header";
-        newUl_header.innerHTML += createElementArrow(i + " " + "category-header-arrow").outerHTML;
+        newUl_header.innerHTML += createElementArrow(i + " " + "category-header-arrow", i).outerHTML;
 
         newUl.innerHTML += newUl_header.outerHTML;
 
@@ -510,11 +512,12 @@ const applyCatClick = () => {
 
 }
 
-const createElementArrow = (id) => {
+const createElementArrow = (id, catNum) => {
     let arrowElem = document.createElement("img");
     arrowElem.classList.add("arrow-header");
     arrowElem.setAttribute("src", "res/arrow.png");
     arrowElem.id = id;
+    arrowElem.setAttribute("category-num", catNum);
 
     return arrowElem;
 }
