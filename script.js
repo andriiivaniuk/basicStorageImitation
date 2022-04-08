@@ -106,6 +106,7 @@ const showAll = (num) => {
     }
 
     document.getElementById("items-list").innerHTML += createAddItemButton().outerHTML;
+    document.getElementById("items-list").innerHTML += createEditItemButton().outerHTML;
     document.getElementById("cats").addEventListener("click", clickCatHandler);
 }
 
@@ -120,10 +121,10 @@ const createAddItemButton = () => {
 }
 
 const addItemToStorage = () => {
-    createModalWindow();
+    createModalWindowAdd();
 }
 
-const createModalWindow = () => {
+const createModalWindowAdd = () => {
     let modal = document.createElement("div");
     modal.classList.add("modal-window-adding-item");
 
@@ -210,15 +211,73 @@ const modalButtonClick = (e) => {
 
     }
 
-    if(e.target.id === "cancel-button"){
+    if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("input-panel")){
         document.querySelector(".modal-back").remove();
         document.querySelector(".modal-window-adding-item").remove();
     }
+
+    if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("modal-window-editing-item")){
+        document.querySelector(".modal-back").remove();
+        document.querySelector(".modal-window-editing-item").remove();
+    }
+
+    if(e.target.classList.contains("list") || e.target.parentElement.classList.contains("list")){
+        e.target.classList.contains("list") ? console.log("editing " + e.target.id) : console.log("editing " + e.target.parentElement.id);
+    }
 }
 
-const createShownElem = (items) => {
+const createEditItemButton = () => {
+    let newBut = document.createElement("button");
+    newBut.innerText = "Edit item";
+    newBut.classList.add("edit-item-but");
+    document.getElementById("items-list").innerHTML += newBut.outerHTML;
+    newBut.setAttribute("onclick", "editItemInStorage()");
+
+    return newBut;
+}
+
+const editItemInStorage = () => {
+    createModalWindowEdit();
+}
+
+const createModalWindowEdit = () => {
+    let modal = document.createElement("div");
+    modal.classList.add("modal-window-editing-item");
+
+    let modalBack = document.createElement("div");
+    modalBack.classList.add("modal-back");
+
+    modal.innerHTML += `
+    <h1 class = "edit-modal-header">Select item to edit it</h1>
+    `
+
+    for(item in storage){
+        modal.innerHTML += createShownElem(item, storage[item].name).outerHTML;
+    }
+
+    modal.innerHTML += `
+    <div class = "modal-buttons-set">
+        <button class = "modal-button" id = "cancel-button">
+            Cancel
+        </button>
+    </div>
+    `
+
+    document.querySelector("body").prepend(modal);
+    document.querySelector("body").prepend(modalBack);
+
+    document.querySelector(".modal-window-editing-item").addEventListener("click", modalButtonClick);
+}
+
+const createShownElem = (items, data) => {
+
 
     let newLi = document.createElement("li");
+
+    if(!!data){
+        newLi.id = data;
+    }
+
     let newLi_name = document.createElement("span");
     newLi_name.innerHTML += +items+1 + ". " + storage[items].name;
     newLi_name.classList.add("names");
