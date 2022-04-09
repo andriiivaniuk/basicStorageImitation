@@ -34,6 +34,8 @@ let storage = [
 
 ];
 
+let currentEditedItem = null;
+
 const filterByCat = (arr) => {
 
     const catSet = new Set();
@@ -214,17 +216,159 @@ const modalButtonClick = (e) => {
     if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("input-panel")){
         document.querySelector(".modal-back").remove();
         document.querySelector(".modal-window-adding-item").remove();
+        return;
     }
 
     if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("modal-window-editing-item")){
         document.querySelector(".modal-back").remove();
         document.querySelector(".modal-window-editing-item").remove();
+        return;
     }
 
     if(e.target.classList.contains("list") || e.target.parentElement.classList.contains("list")){
-        e.target.classList.contains("list") ? console.log("editing " + e.target.id) : console.log("editing " + e.target.parentElement.id);
+        document.querySelector(".modal-window-editing-item").remove();
+        e.target.classList.contains("list") ? editSelectedItem(e.target.id) : editSelectedItem(e.target.parentElement.id);
+        return;
+    }
+
+    if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("modal-window-editing-actual-item")){
+        document.querySelector(".modal-window-editing-actual-item").remove();
+        document.querySelector(".modal-back").remove();
+        return;
+    }
+
+    if(e.target.id === "save-button"){
+        saveButtonClick();
     }
 }
+
+const saveButtonClick = () => {
+    let newName = document.getElementById("modal-input-name").value;
+    if(newName.length === 0){
+        alert("you have to input name");
+        return;
+    }
+
+    let newPrice = document.getElementById("modal-input-price").value;
+    if(document.getElementById("modal-input-price").value === ""){
+        alert("you have to input price");
+        return;
+    }
+
+    let newCatList = [];
+    if(document.getElementById("modal-input-cat0").value === "" &&
+       document.getElementById("modal-input-cat1").value === "" &&
+       document.getElementById("modal-input-cat2").value === ""){
+        alert("you have to input at least 1 category");
+        return;
+    }
+    else{
+        for(let i = 0; i < 3; i++){
+            document.getElementById("modal-input-cat" + i).value !== "" ?
+            newCatList.push(document.getElementById("modal-input-cat" + i).value) : false;
+        }
+    }
+
+    let updatedItem = {name: newName, price: +newPrice, catList: newCatList};
+    
+    let changesCounter = 0;
+
+    for(field in updatedItem){
+        if(Array.isArray(updatedItem[field])){
+            updatedItem[field].length !== currentEditedItem[field].length ? changesCounter++ : false;
+
+            for(let i = 0; i < updatedItem[field].length; i++){
+                if(updatedItem[field][i] !== currentEditedItem[field][i]){
+                    changesCounter++;
+                }
+            }
+            continue;
+        }
+        if(updatedItem[field] !== currentEditedItem[field]){
+            changesCounter++;
+        }
+    }
+
+    if(changesCounter === 0){
+        alert("nothing changed!");
+        return;
+    }
+
+    else{
+        saveEditedItem(updatedItem);
+    }
+}
+
+const saveEditedItem = (updatedItem) => {
+    
+    storage[storage.indexOf(currentEditedItem)] = updatedItem;
+    alert("item edited");
+
+    document.querySelector(".modal-window-editing-actual-item").remove();
+    document.querySelector(".modal-back").remove();
+    document.getElementById("items-list").innerHTML = "";
+    showAll(1);
+    
+}
+
+const editSelectedItem = (itemName) => {
+    let modal = document.createElement("div");
+    modal.classList.add("modal-window-editing-actual-item");
+    
+    currentEditedItem = null;
+
+    for(item in storage){
+        if(storage[item].name === itemName){
+            currentEditedItem = storage[item];
+        }
+    }
+    
+    modal.innerHTML += `
+    <ul class = "input-panel">
+        <h1>Editing ${itemName}: </h1>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Name (ID): </span>
+            <input type = text class = "modal-input" id = "modal-input-name">
+        </li>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Price: </span>
+            <input type = number class = "modal-input" id = "modal-input-price">
+        </li>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Category: </span>
+            <input type = text class = "modal-input category-input" id = "modal-input-cat0">
+        </li>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Category 2 (optional): </span>
+            <input type = text class = "modal-input category-input" id = "modal-input-cat1">
+        </li>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Category 3 (optional): </span>
+            <input type = text class = "modal-input category-input" id = "modal-input-cat2">
+        </li>
+    </ul>
+
+    <div class = "modal-buttons-set">
+        <button class = "modal-button" id = "save-button">
+            Save
+        </button>
+        <button class = "modal-button" id = "cancel-button">
+            Cancel
+        </button>
+    </div>
+
+    `
+    document.querySelector("body").append(modal);
+    document.querySelector(".modal-window-editing-actual-item").addEventListener("click", modalButtonClick);
+
+    document.getElementById("modal-input-name").value = currentEditedItem.name;
+    document.getElementById("modal-input-price").value = currentEditedItem.price;
+
+    document.getElementById("modal-input-cat0").value = currentEditedItem.catList[0];
+    document.getElementById("modal-input-cat1").value = !!currentEditedItem.catList[1] ? currentEditedItem.catList[1] : "";
+    document.getElementById("modal-input-cat2").value = !!currentEditedItem.catList[2] ? currentEditedItem.catList[2] : "";
+    
+} 
 
 const createEditItemButton = () => {
     let newBut = document.createElement("button");

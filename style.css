@@ -193,3 +193,14 @@
     text-decoration: underline;
     font-size: 1.1em;
 }
+
+.modal-window-editing-actual-item{
+    position: absolute;
+    top: 0; bottom: 0; right: 0; left: 0; margin: auto;
+    border-top: 30px cornflowerblue solid;
+    width: 600px;
+    height: fit-content;
+    background-color: whitesmoke;
+    font-size: 1.1em;
+    padding: 10px;
+}
