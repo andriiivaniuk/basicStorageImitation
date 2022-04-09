@@ -109,6 +109,8 @@ const showAll = (num) => {
 
     document.getElementById("items-list").innerHTML += createAddItemButton().outerHTML;
     document.getElementById("items-list").innerHTML += createEditItemButton().outerHTML;
+    document.getElementById("items-list").innerHTML += createDeleteItemButton().outerHTML;
+
     document.getElementById("cats").addEventListener("click", clickCatHandler);
 }
 
@@ -116,8 +118,18 @@ const createAddItemButton = () => {
     let newBut = document.createElement("button");
     newBut.innerText = "Add item";
     newBut.classList.add("add-item-but");
-    document.getElementById("items-list").innerHTML += newBut.outerHTML;
+    //document.getElementById("items-list").innerHTML += newBut.outerHTML;
     newBut.setAttribute("onclick", "addItemToStorage()");
+
+    return newBut;
+}
+
+const createDeleteItemButton = () => {
+    let newBut = document.createElement("button");
+    newBut.innerText = "Delete item";
+    newBut.classList.add("delete-item-but");
+    //document.getElementById("items-list").innerHTML += newBut.outerHTML;
+    newBut.setAttribute("onclick", 'createModalWindowEdit("delete")');
 
     return newBut;
 }
@@ -192,7 +204,13 @@ const modalButtonClick = (e) => {
             alert("you have to input nesessery fields");
             return;
         }
-        
+
+        for(item of storage){
+            if(item.name === document.getElementById("modal-input-name").value){
+                alert("item " + document.getElementById("modal-input-name").value + " already in storage");
+                return;
+            }
+        }
 
         let newItem = {
             name: document.getElementById("modal-input-name").value,
@@ -213,6 +231,23 @@ const modalButtonClick = (e) => {
 
     }
 
+    if(!!!document.querySelector(".modal-window-editing-item") &&
+        (e.target.classList.contains("list") || e.target.parentElement.classList.contains("list"))){
+        if(confirm("delete selected item?")){
+            e.target.classList.contains("list") ? deleteItem(e.target.id) : deleteItem(e.target.parentElement.id);
+            return;
+        }
+        else{
+            return;
+        }
+    }
+
+    if(e.target.id === "cancel-button" && !!document.querySelector(".modal-window-deleting-item")){
+        document.querySelector(".modal-back").remove();
+        document.querySelector(".modal-window-deleting-item").remove();
+        return;
+    }
+
     if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("input-panel")){
         document.querySelector(".modal-back").remove();
         document.querySelector(".modal-window-adding-item").remove();
@@ -225,7 +260,7 @@ const modalButtonClick = (e) => {
         return;
     }
 
-    if(e.target.classList.contains("list") || e.target.parentElement.classList.contains("list")){
+    if(e.target.classList.contains("list") || e.target.parentElement.classList.contains("list") && !e.target.parentElement.classList.contains(".modal-window-deleting-item")){
         document.querySelector(".modal-window-editing-item").remove();
         e.target.classList.contains("list") ? editSelectedItem(e.target.id) : editSelectedItem(e.target.parentElement.id);
         return;
@@ -381,19 +416,31 @@ const createEditItemButton = () => {
 }
 
 const editItemInStorage = () => {
-    createModalWindowEdit();
+    createModalWindowEdit("edit");
 }
 
-const createModalWindowEdit = () => {
+const createModalWindowEdit = (inputData) => {
     let modal = document.createElement("div");
-    modal.classList.add("modal-window-editing-item");
+
+    if(inputData === "edit"){
+        modal.classList.add("modal-window-editing-item");
+    }
+    if(inputData === "delete"){
+        modal.classList.add("modal-window-deleting-item");
+    }
 
     let modalBack = document.createElement("div");
     modalBack.classList.add("modal-back");
 
-    modal.innerHTML += `
-    <h1 class = "edit-modal-header">Select item to edit it</h1>
-    `
+    if(inputData === "edit"){
+        modal.innerHTML += `
+        <h1 class = "edit-modal-header">Select item to edit it</h1>
+    `}
+
+    if(inputData === "delete"){
+        modal.innerHTML += `
+        <h1 class = "edit-modal-header">Select item to delete it</h1>
+    `}
 
     for(item in storage){
         modal.innerHTML += createShownElem(item, storage[item].name).outerHTML;
@@ -410,7 +457,25 @@ const createModalWindowEdit = () => {
     document.querySelector("body").prepend(modal);
     document.querySelector("body").prepend(modalBack);
 
-    document.querySelector(".modal-window-editing-item").addEventListener("click", modalButtonClick);
+    if(inputData === "edit"){
+        document.querySelector(".modal-window-editing-item").addEventListener("click", modalButtonClick);
+    }
+    if(inputData === "delete"){
+        document.querySelector(".modal-window-deleting-item").addEventListener("click", modalButtonClick);
+    }
+}
+
+const deleteItem = (itemName) => {
+    console.log("deleting... " + itemName);
+
+    storage = storage.filter(x => x.name !== itemName);
+
+    document.querySelector(".modal-back").remove();
+    document.querySelector(".modal-window-deleting-item").remove();
+
+    document.getElementById("items-list").innerHTML = "";
+    showAll(1);
+
 }
 
 const createShownElem = (items, data) => {
