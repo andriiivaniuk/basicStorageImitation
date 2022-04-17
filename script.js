@@ -118,7 +118,6 @@ const createAddItemButton = () => {
     let newBut = document.createElement("button");
     newBut.innerText = "Add item";
     newBut.classList.add("add-item-but");
-    //document.getElementById("items-list").innerHTML += newBut.outerHTML;
     newBut.setAttribute("onclick", "addItemToStorage()");
 
     return newBut;
@@ -128,7 +127,6 @@ const createDeleteItemButton = () => {
     let newBut = document.createElement("button");
     newBut.innerText = "Delete item";
     newBut.classList.add("delete-item-but");
-    //document.getElementById("items-list").innerHTML += newBut.outerHTML;
     newBut.setAttribute("onclick", 'createModalWindowEdit("delete")');
 
     return newBut;
@@ -154,7 +152,7 @@ const createModalWindowAdd = () => {
             </li>
             <li class = "input-field-set">
                 <span class = "input-field-title">Price: </span>
-                <input type = number class = "modal-input" id = "modal-input-price">
+                <input type = number min = "0" class = "modal-input" id = "modal-input-price">
             </li>
             <li class = "input-field-set">
                 <span class = "input-field-title">Category: </span>
@@ -192,15 +190,19 @@ const modalButtonClick = (e) => {
 
         let values = [];
         let inputValues = document.getElementsByClassName("category-input");
+        if(inputValues.length === 0){
+            alert("you have to input categories");
+            return;
+        }
 
         for(let i = 0; i < inputValues.length; i++){
-            if(inputValues[i].value !== ""){
+            if(checkInputValue(inputValues[i].value)){
                 values.push(inputValues[i].value);
             }
         }
 
-        if(document.getElementById("modal-input-name").value === "" || values.length === 0 
-            || document.getElementById("modal-input-price").value === ""){
+        if(!checkInputValue(document.getElementById("modal-input-name").value) || values.length === 0 || 
+            !checkInputValue(document.getElementById("modal-input-price").value) ){
             alert("you have to input nesessery fields");
             return;
         }
@@ -277,29 +279,46 @@ const modalButtonClick = (e) => {
     }
 }
 
+const checkInputValue = (input) => {
+
+    if(input.length === 0){
+        return false;
+    }
+
+    if (Array.from(input).every(x => x === " ") ){
+        return false;
+    }
+
+    if(+input < 0){
+        return false;
+    } 
+
+    return true;
+}
+
 const saveButtonClick = () => {
     let newName = document.getElementById("modal-input-name").value;
-    if(newName.length === 0){
-        alert("you have to input name");
+    if(!checkInputValue(newName)){
+        alert("you have to input proper name");
         return;
     }
 
     let newPrice = document.getElementById("modal-input-price").value;
-    if(document.getElementById("modal-input-price").value === ""){
-        alert("you have to input price");
+    if(!checkInputValue(newPrice)){
+        alert("you have to input proper price");
         return;
     }
 
     let newCatList = [];
-    if(document.getElementById("modal-input-cat0").value === "" &&
-       document.getElementById("modal-input-cat1").value === "" &&
-       document.getElementById("modal-input-cat2").value === ""){
-        alert("you have to input at least 1 category");
+    if(!checkInputValue(document.getElementById("modal-input-cat0").value) &&
+       !checkInputValue(document.getElementById("modal-input-cat1").value) &&
+       !checkInputValue(document.getElementById("modal-input-cat2").value) ){
+        alert("you have to properly input at least 1 category");
         return;
     }
     else{
         for(let i = 0; i < 3; i++){
-            document.getElementById("modal-input-cat" + i).value !== "" ?
+            checkInputValue(document.getElementById("modal-input-cat" + i).value) ?
             newCatList.push(document.getElementById("modal-input-cat" + i).value) : false;
         }
     }
@@ -367,7 +386,7 @@ const editSelectedItem = (itemName) => {
         </li>
         <li class = "input-field-set">
             <span class = "input-field-title">Price: </span>
-            <input type = number class = "modal-input" id = "modal-input-price">
+            <input type = number min = "0" class = "modal-input" id = "modal-input-price">
         </li>
         <li class = "input-field-set">
             <span class = "input-field-title">Category: </span>
@@ -466,8 +485,6 @@ const createModalWindowEdit = (inputData) => {
 }
 
 const deleteItem = (itemName) => {
-    console.log("deleting... " + itemName);
-
     storage = storage.filter(x => x.name !== itemName);
 
     document.querySelector(".modal-back").remove();
@@ -475,11 +492,9 @@ const deleteItem = (itemName) => {
 
     document.getElementById("items-list").innerHTML = "";
     showAll(1);
-
 }
 
 const createShownElem = (items, data) => {
-
 
     let newLi = document.createElement("li");
 
@@ -699,7 +714,7 @@ const writeCats = () => {
 const searchInputHandler = (e) => {
     let arr = [];
     for(item in storage){
-        if(storage[item].name.includes(e.target.value) && e.target.value !== ""){
+        if(storage[item].name.includes(e.target.value) && e.target.value !== "" && e.target.value !== " "){
             arr.push(storage[item]);
         }
     }
