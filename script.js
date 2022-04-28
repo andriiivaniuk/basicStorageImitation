@@ -10,29 +10,37 @@ let catMenuState = {
     allOpen: false
 }
 
-let storage = [
+let storage;
 
-    {name: "lemon", price: 2.30, catList: ["food", "fruits"] },
-    {name: "apple", price: 1.20, catList: ["food", "fruits"] },
-    {name: "banana", price: 1.50, catList: ["food", "fruits"] },
-    {name: "tomato", price: 1.60, catList: ["food", "vegetables"] },
-    {name: "potato", price: 0.90, catList: ["food", "vegetables"] },
-    {name: "buckweat", price: 1.90, catList: ["food", "grains"] },
-    {name: "rice", price: 1.40, catList: ["food", "grains" ] },
-    {name: "lighter", price: 0.30, catList: ["useful things"] },
-    {name: "paper bag", price: 0.10, catList: ["useful things", "bags"] },
-    {name: "plastic bag", price: 0.20, catList: ["useful things", "bags"] },
-    {name: "coffee", price: 1, catList: ["drinks"] },
-    {name: "tea", price: 1, catList: ["drinks"] },
-    {name: "water", price: 0.80, catList: ["drinks"] },
-    {name: "beer", price: 1.05, catList: ["drinks", "alcohol"] },
-    {name: "vine", price: 3, catList: ["drinks", "alcohol"] },
-    {name: "salt", price: 0.40, catList: ["spices", "food"] },
-    {name: "sugar", price: 0.40, catList: ["spices", "food"] },
-    {name: "bread", price: 0.50, catList: ["food"] },
-    {name: "vodka", price: 3, catList: ["alcohol", "drinks"] }
+const fetchStorage = async () => {
+    let storageProm = await fetch('/storage.json');
+    if(storageProm.ok){
+        storage = await storageProm.json();
+        init();
+    }
+    else{
+        document.write("something went wrong with storage data! Json data missing");
+    }
+}
 
-];
+const fetchStorage2 = () => {
+    return fetch('/storage.json')
+    .then( response => {
+        if(response.ok){
+            return response.json()
+        }
+    })
+    .then(result => {
+       storage = result;
+       init();
+    })
+    .catch((error) => {
+        document.write("something went wrong with storage data! Json data missing");
+    })
+}
+
+//fetchStorage2();
+fetchStorage();
 
 let currentEditedItem = null;
 
@@ -848,5 +856,3 @@ const setCurrentState = (num) => {
 
     checkButtons();
 }
-
-init();

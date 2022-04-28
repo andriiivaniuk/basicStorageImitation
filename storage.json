@@ -1,0 +1,149 @@
+[
+    {
+        "name": "lemon",
+        "price": 2.3,
+        "catList": [
+            "food",
+            "fruits"
+        ]
+    },
+    {
+        "name": "apple",
+        "price": 1.2,
+        "catList": [
+            "food",
+            "fruits"
+        ]
+    },
+    {
+        "name": "banana",
+        "price": 1.5,
+        "catList": [
+            "food",
+            "fruits"
+        ]
+    },
+    {
+        "name": "tomato",
+        "price": 1.6,
+        "catList": [
+            "food",
+            "vegetables"
+        ]
+    },
+    {
+        "name": "potato",
+        "price": 0.9,
+        "catList": [
+            "food",
+            "vegetables"
+        ]
+    },
+    {
+        "name": "buckweat",
+        "price": 1.9,
+        "catList": [
+            "food",
+            "grains"
+        ]
+    },
+    {
+        "name": "rice",
+        "price": 1.4,
+        "catList": [
+            "food",
+            "grains"
+        ]
+    },
+    {
+        "name": "lighter",
+        "price": 0.3,
+        "catList": [
+            "useful things"
+        ]
+    },
+    {
+        "name": "paper bag",
+        "price": 0.1,
+        "catList": [
+            "useful things",
+            "bags"
+        ]
+    },
+    {
+        "name": "plastic bag",
+        "price": 0.2,
+        "catList": [
+            "useful things",
+            "bags"
+        ]
+    },
+    {
+        "name": "coffee",
+        "price": 1,
+        "catList": [
+            "drinks"
+        ]
+    },
+    {
+        "name": "tea",
+        "price": 1,
+        "catList": [
+            "drinks"
+        ]
+    },
+    {
+        "name": "water",
+        "price": 0.8,
+        "catList": [
+            "drinks"
+        ]
+    },
+    {
+        "name": "beer",
+        "price": 1.05,
+        "catList": [
+            "drinks",
+            "alcohol"
+        ]
+    },
+    {
+        "name": "vine",
+        "price": 3,
+        "catList": [
+            "drinks",
+            "alcohol"
+        ]
+    },
+    {
+        "name": "salt",
+        "price": 0.4,
+        "catList": [
+            "spices",
+            "food"
+        ]
+    },
+    {
+        "name": "sugar",
+        "price": 0.4,
+        "catList": [
+            "spices",
+            "food"
+        ]
+    },
+    {
+        "name": "bread",
+        "price": 0.5,
+        "catList": [
+            "food"
+        ]
+    },
+    {
+        "name": "vodka",
+        "price": 3,
+        "catList": [
+            "alcohol",
+            "drinks"
+        ]
+    }
+]
