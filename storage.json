@@ -1,149 +1,188 @@
-[
+{
+  "storage": [
     {
-        "name": "lemon",
-        "price": 2.3,
-        "catList": [
-            "food",
-            "fruits"
-        ]
+      "id": "lemon",
+      "name": "lemon",
+      "price": 2.3,
+      "catList": [
+        "food",
+        "fruits"
+      ]
     },
     {
-        "name": "apple",
-        "price": 1.2,
-        "catList": [
-            "food",
-            "fruits"
-        ]
+      "id": "apple",
+      "name": "apple",
+      "price": 1.2,
+      "catList": [
+        "food",
+        "fruits"
+      ]
     },
     {
-        "name": "banana",
-        "price": 1.5,
-        "catList": [
-            "food",
-            "fruits"
-        ]
+      "id": "banana",
+      "name": "banana",
+      "price": 1.5,
+      "catList": [
+        "food",
+        "fruits"
+      ]
     },
     {
-        "name": "tomato",
-        "price": 1.6,
-        "catList": [
-            "food",
-            "vegetables"
-        ]
+      "id": "tomato",
+      "name": "tomato",
+      "price": 1.6,
+      "catList": [
+        "food",
+        "vegetables"
+      ]
     },
     {
-        "name": "potato",
-        "price": 0.9,
-        "catList": [
-            "food",
-            "vegetables"
-        ]
+      "id": "potato",
+      "name": "potato",
+      "price": 0.9,
+      "catList": [
+        "food",
+        "vegetables"
+      ]
     },
     {
-        "name": "buckweat",
-        "price": 1.9,
-        "catList": [
-            "food",
-            "grains"
-        ]
+      "id": "buckweat",
+      "name": "buckweat",
+      "price": 1.9,
+      "catList": [
+        "food",
+        "grains"
+      ]
     },
     {
-        "name": "rice",
-        "price": 1.4,
-        "catList": [
-            "food",
-            "grains"
-        ]
+      "id": "rice",
+      "name": "rice",
+      "price": 1.4,
+      "catList": [
+        "food",
+        "grains"
+      ]
     },
     {
-        "name": "lighter",
-        "price": 0.3,
-        "catList": [
-            "useful things"
-        ]
+      "id": "lighter",
+      "name": "lighter",
+      "price": 0.3,
+      "catList": [
+        "useful things"
+      ]
     },
     {
-        "name": "paper bag",
-        "price": 0.1,
-        "catList": [
-            "useful things",
-            "bags"
-        ]
+      "id": "paper bag",
+      "name": "paper bag",
+      "price": 0.1,
+      "catList": [
+        "useful things",
+        "bags"
+      ]
     },
     {
-        "name": "plastic bag",
-        "price": 0.2,
-        "catList": [
-            "useful things",
-            "bags"
-        ]
+      "id": "plastic bag",
+      "name": "plastic bag",
+      "price": 0.2,
+      "catList": [
+        "useful things",
+        "bags"
+      ]
     },
     {
-        "name": "coffee",
-        "price": 1,
-        "catList": [
-            "drinks"
-        ]
+      "id": "coffee",
+      "name": "coffee",
+      "price": 1,
+      "catList": [
+        "drinks"
+      ]
     },
     {
-        "name": "tea",
-        "price": 1,
-        "catList": [
-            "drinks"
-        ]
+      "id": "tea",
+      "name": "tea",
+      "price": 1,
+      "catList": [
+        "drinks"
+      ]
     },
     {
-        "name": "water",
-        "price": 0.8,
-        "catList": [
-            "drinks"
-        ]
+      "id": "water",
+      "name": "water",
+      "price": 0.8,
+      "catList": [
+        "drinks"
+      ]
     },
     {
-        "name": "beer",
-        "price": 1.05,
-        "catList": [
-            "drinks",
-            "alcohol"
-        ]
+      "id": "beer",
+      "name": "beer",
+      "price": 1.05,
+      "catList": [
+        "drinks",
+        "alcohol"
+      ]
     },
     {
-        "name": "vine",
-        "price": 3,
-        "catList": [
-            "drinks",
-            "alcohol"
-        ]
+      "id": "vine",
+      "name": "vine",
+      "price": 3,
+      "catList": [
+        "drinks",
+        "alcohol"
+      ]
     },
     {
-        "name": "salt",
-        "price": 0.4,
-        "catList": [
-            "spices",
-            "food"
-        ]
+      "id": "salt",
+      "name": "salt",
+      "price": 0.4,
+      "catList": [
+        "spices",
+        "food"
+      ]
     },
     {
-        "name": "sugar",
-        "price": 0.4,
-        "catList": [
-            "spices",
-            "food"
-        ]
+      "id": "sugar",
+      "name": "sugar",
+      "price": 0.4,
+      "catList": [
+        "spices",
+        "food"
+      ]
     },
     {
-        "name": "bread",
-        "price": 0.5,
-        "catList": [
-            "food"
-        ]
+      "id": "bread",
+      "name": "bread",
+      "price": 0.5,
+      "catList": [
+        "food"
+      ]
     },
     {
-        "name": "vodka",
-        "price": 3,
-        "catList": [
-            "alcohol",
-            "drinks"
-        ]
+      "id": "vodka",
+      "name": "vodka",
+      "price": 3,
+      "catList": [
+        "alcohol",
+        "drinks"
+      ]
+    },
+    {
+      "name": "Wiskas",
+      "price": 0.7,
+      "catList": [
+        "catfood",
+        "petfood"
+      ],
+      "id": "Wiskas"
+    },
+    {
+      "name": "Felix",
+      "price": 0.6,
+      "catList": [
+        "catfood",
+        "petfood"
+      ],
+      "id": "Felix"
     }
-]
+  ]
+}

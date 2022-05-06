@@ -15,11 +15,11 @@ let storage;
 const fetchStorage = async () => {
     let storageProm = await fetch('/storage.json');
     if(storageProm.ok){
-        storage = await storageProm.json();
+        storage = (await storageProm.json()).storage;
         init();
     }
     else{
-        document.write("something went wrong with storage data! Json data missing");
+        document.write("something went wrong with storage data! Json data missing or server containing it is not running");
     }
 }
 
@@ -31,7 +31,7 @@ const fetchStorage2 = () => {
         }
     })
     .then(result => {
-       storage = result;
+       storage = result.storage;
        init();
     })
     .catch((error) => {
@@ -39,8 +39,10 @@ const fetchStorage2 = () => {
     })
 }
 
-//fetchStorage2();
-fetchStorage();
+Promise.race([
+    fetchStorage2(),
+    fetchStorage()
+])
 
 let currentEditedItem = null;
 
@@ -193,6 +195,44 @@ const createModalWindowAdd = () => {
     document.querySelector(".modal-buttons-set").addEventListener("click", modalButtonClick);
 }
 
+const postItem = async (newItem, isEdited, isDelete) => {
+    
+    newItem.id = newItem.name;
+    let url = "http://localhost:3000/storage"
+    let method = 'POST'
+    let headers = {
+        'Content-type': 'application/json'
+    };
+
+    if(isEdited){
+        method = 'PUT';
+        url += "/" + newItem.id;
+    }
+
+    if(isDelete){
+        console.log(newItem);
+        method = 'DELETE';
+        url += "/" + newItem;
+        headers = {};
+    }
+
+    let responce = await fetch(url, { 
+        method: method,
+        headers,
+        credentials: 'include',
+        body: JSON.stringify(newItem),
+    })
+
+    if(responce.ok){
+        console.log("task done");
+    }
+
+    else{
+        console.log("problem with changing the storage");
+    }
+}
+
+
 const modalButtonClick = (e) => {
     if(e.target.id === "add-item-button"){
 
@@ -229,6 +269,8 @@ const modalButtonClick = (e) => {
         };
 
         storage.push(newItem);
+
+        postItem(newItem, false, false);
 
         alert("new item added!");
 
@@ -369,6 +411,9 @@ const saveEditedItem = (updatedItem) => {
     document.querySelector(".modal-window-editing-actual-item").remove();
     document.querySelector(".modal-back").remove();
     document.getElementById("items-list").innerHTML = "";
+
+    postItem(updatedItem, true, false);
+
     showAll(1);
     
 }
@@ -499,6 +544,9 @@ const deleteItem = (itemName) => {
     document.querySelector(".modal-window-deleting-item").remove();
 
     document.getElementById("items-list").innerHTML = "";
+
+    postItem(itemName, false, true);
+
     showAll(1);
 }
 
