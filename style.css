@@ -119,6 +119,32 @@
     background-color: whitesmoke;
 }
 
+.modal-window-editing-item{
+    position: absolute;
+    top: 0; bottom: 0; right: 0; left: 0; margin: auto;
+    border-top: 30px cornflowerblue solid;
+    width: 600px;
+    height: fit-content;
+    background-color: whitesmoke;
+    font-size: 1.1em;
+}
+
+.modal-window-editing-item > li {
+    margin: 5px;
+    transition: 0.2s;
+}
+
+.modal-window-editing-item > li:hover{
+    background-color: yellow;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.edit-modal-header{
+    margin-left: 15px;
+}
+
+
 .modal-back{
     position: absolute;
     width: 95%;
@@ -161,3 +187,48 @@
     margin: 10px;
 }
 
+.edit-item-but{
+    margin: 10px;
+    padding: 10px;
+    text-decoration: underline;
+    font-size: 1.1em;
+}
+
+.modal-window-editing-actual-item{
+    position: absolute;
+    top: 0; bottom: 0; right: 0; left: 0; margin: auto;
+    border-top: 30px cornflowerblue solid;
+    width: 600px;
+    height: fit-content;
+    background-color: whitesmoke;
+    font-size: 1.1em;
+    padding: 10px;
+}
+
+.modal-window-deleting-item{
+    position: absolute;
+    top: 0; bottom: 0; right: 0; left: 0; margin: auto;
+    border-top: 30px rebeccapurple;
+    width: 600px;
+    height: fit-content;
+    background-color: whitesmoke;
+    font-size: 1.1em;
+}
+
+.modal-window-deleting-item > li {
+    margin: 5px;
+    transition: 0.2s;
+}
+
+.modal-window-deleting-item > li:hover{
+    background-color: red;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.delete-item-but{
+    margin: 10px;
+    padding: 10px;
+    text-decoration: underline;
+    font-size: 1.1em;
+}

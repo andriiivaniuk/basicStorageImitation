@@ -10,29 +10,41 @@ let catMenuState = {
     allOpen: false
 }
 
-let storage = [
+let storage;
 
-    {name: "lemon", price: 2.30, catList: ["food", "fruits"] },
-    {name: "apple", price: 1.20, catList: ["food", "fruits"] },
-    {name: "banana", price: 1.50, catList: ["food", "fruits"] },
-    {name: "tomato", price: 1.60, catList: ["food", "vegetables"] },
-    {name: "potato", price: 0.90, catList: ["food", "vegetables"] },
-    {name: "buckweat", price: 1.90, catList: ["food", "grains"] },
-    {name: "rice", price: 1.40, catList: ["food", "grains" ] },
-    {name: "lighter", price: 0.30, catList: ["useful things"] },
-    {name: "paper bag", price: 0.10, catList: ["useful things", "bags"] },
-    {name: "plastic bag", price: 0.20, catList: ["useful things", "bags"] },
-    {name: "coffee", price: 1, catList: ["drinks"] },
-    {name: "tea", price: 1, catList: ["drinks"] },
-    {name: "water", price: 0.80, catList: ["drinks"] },
-    {name: "beer", price: 1.05, catList: ["drinks", "alcohol"] },
-    {name: "vine", price: 3, catList: ["drinks", "alcohol"] },
-    {name: "salt", price: 0.40, catList: ["spices", "food"] },
-    {name: "sugar", price: 0.40, catList: ["spices", "food"] },
-    {name: "bread", price: 0.50, catList: ["food"] },
-    {name: "vodka", price: 3, catList: ["alcohol", "drinks"] }
+const fetchStorage = async () => {
+    let storageProm = await fetch('/storage.json');
+    if(storageProm.ok){
+        storage = (await storageProm.json()).storage;
+        init();
+    }
+    else{
+        document.write("something went wrong with storage data! Json data missing or server containing it is not running");
+    }
+}
 
-];
+const fetchStorage2 = () => {
+    return fetch('/storage.json')
+    .then( response => {
+        if(response.ok){
+            return response.json()
+        }
+    })
+    .then(result => {
+       storage = result.storage;
+       init();
+    })
+    .catch((error) => {
+        document.write("something went wrong with storage data! Json data missing");
+    })
+}
+
+Promise.race([
+    fetchStorage2(),
+    fetchStorage()
+])
+
+let currentEditedItem = null;
 
 const filterByCat = (arr) => {
 
@@ -106,6 +118,9 @@ const showAll = (num) => {
     }
 
     document.getElementById("items-list").innerHTML += createAddItemButton().outerHTML;
+    document.getElementById("items-list").innerHTML += createEditItemButton().outerHTML;
+    document.getElementById("items-list").innerHTML += createDeleteItemButton().outerHTML;
+
     document.getElementById("cats").addEventListener("click", clickCatHandler);
 }
 
@@ -113,17 +128,25 @@ const createAddItemButton = () => {
     let newBut = document.createElement("button");
     newBut.innerText = "Add item";
     newBut.classList.add("add-item-but");
-    document.getElementById("items-list").innerHTML += newBut.outerHTML;
     newBut.setAttribute("onclick", "addItemToStorage()");
 
     return newBut;
 }
 
-const addItemToStorage = () => {
-    createModalWindow();
+const createDeleteItemButton = () => {
+    let newBut = document.createElement("button");
+    newBut.innerText = "Delete item";
+    newBut.classList.add("delete-item-but");
+    newBut.setAttribute("onclick", 'createModalWindowEdit("delete")');
+
+    return newBut;
 }
 
-const createModalWindow = () => {
+const addItemToStorage = () => {
+    createModalWindowAdd();
+}
+
+const createModalWindowAdd = () => {
     let modal = document.createElement("div");
     modal.classList.add("modal-window-adding-item");
 
@@ -139,7 +162,7 @@ const createModalWindow = () => {
             </li>
             <li class = "input-field-set">
                 <span class = "input-field-title">Price: </span>
-                <input type = number class = "modal-input" id = "modal-input-price">
+                <input type = number min = "0" class = "modal-input" id = "modal-input-price">
             </li>
             <li class = "input-field-set">
                 <span class = "input-field-title">Category: </span>
@@ -172,24 +195,72 @@ const createModalWindow = () => {
     document.querySelector(".modal-buttons-set").addEventListener("click", modalButtonClick);
 }
 
+const postItem = async (newItem, isEdited, isDelete) => {
+    
+    newItem.id = newItem.name;
+    let url = "http://localhost:3000/storage"
+    let method = 'POST'
+    let headers = {
+        'Content-type': 'application/json'
+    };
+
+    if(isEdited){
+        method = 'PUT';
+        url += "/" + newItem.id;
+    }
+
+    if(isDelete){
+        console.log(newItem);
+        method = 'DELETE';
+        url += "/" + newItem;
+        headers = {};
+    }
+
+    let responce = await fetch(url, { 
+        method: method,
+        headers,
+        credentials: 'include',
+        body: JSON.stringify(newItem),
+    })
+
+    if(responce.ok){
+        console.log("task done");
+    }
+
+    else{
+        console.log("problem with changing the storage");
+    }
+}
+
+
 const modalButtonClick = (e) => {
     if(e.target.id === "add-item-button"){
 
         let values = [];
         let inputValues = document.getElementsByClassName("category-input");
+        if(inputValues.length === 0){
+            alert("you have to input categories");
+            return;
+        }
 
         for(let i = 0; i < inputValues.length; i++){
-            if(inputValues[i].value !== ""){
+            if(checkInputValue(inputValues[i].value)){
                 values.push(inputValues[i].value);
             }
         }
 
-        if(document.getElementById("modal-input-name").value === "" || values.length === 0 
-            || document.getElementById("modal-input-price").value === ""){
+        if(!checkInputValue(document.getElementById("modal-input-name").value) || values.length === 0 || 
+            !checkInputValue(document.getElementById("modal-input-price").value) ){
             alert("you have to input nesessery fields");
             return;
         }
-        
+
+        for(item of storage){
+            if(item.name === document.getElementById("modal-input-name").value){
+                alert("item " + document.getElementById("modal-input-name").value + " already in storage");
+                return;
+            }
+        }
 
         let newItem = {
             name: document.getElementById("modal-input-name").value,
@@ -198,6 +269,8 @@ const modalButtonClick = (e) => {
         };
 
         storage.push(newItem);
+
+        postItem(newItem, false, false);
 
         alert("new item added!");
 
@@ -210,15 +283,281 @@ const modalButtonClick = (e) => {
 
     }
 
-    if(e.target.id === "cancel-button"){
+    if(!!!document.querySelector(".modal-window-editing-item") &&
+        (e.target.classList.contains("list") || e.target.parentElement.classList.contains("list"))){
+        if(confirm("delete selected item?")){
+            e.target.classList.contains("list") ? deleteItem(e.target.id) : deleteItem(e.target.parentElement.id);
+            return;
+        }
+        else{
+            return;
+        }
+    }
+
+    if(e.target.id === "cancel-button" && !!document.querySelector(".modal-window-deleting-item")){
+        document.querySelector(".modal-back").remove();
+        document.querySelector(".modal-window-deleting-item").remove();
+        return;
+    }
+
+    if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("input-panel")){
         document.querySelector(".modal-back").remove();
         document.querySelector(".modal-window-adding-item").remove();
+        return;
+    }
+
+    if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("modal-window-editing-item")){
+        document.querySelector(".modal-back").remove();
+        document.querySelector(".modal-window-editing-item").remove();
+        return;
+    }
+
+    if(e.target.classList.contains("list") || e.target.parentElement.classList.contains("list") && !e.target.parentElement.classList.contains(".modal-window-deleting-item")){
+        document.querySelector(".modal-window-editing-item").remove();
+        e.target.classList.contains("list") ? editSelectedItem(e.target.id) : editSelectedItem(e.target.parentElement.id);
+        return;
+    }
+
+    if(e.target.id === "cancel-button" && e.target.parentElement.parentElement.classList.contains("modal-window-editing-actual-item")){
+        document.querySelector(".modal-window-editing-actual-item").remove();
+        document.querySelector(".modal-back").remove();
+        return;
+    }
+
+    if(e.target.id === "save-button"){
+        saveButtonClick();
     }
 }
 
-const createShownElem = (items) => {
+const checkInputValue = (input) => {
+
+    if(input.length === 0){
+        return false;
+    }
+
+    if (Array.from(input).every(x => x === " ") ){
+        return false;
+    }
+
+    if(+input < 0){
+        return false;
+    } 
+
+    return true;
+}
+
+const saveButtonClick = () => {
+    let newName = document.getElementById("modal-input-name").value;
+    if(!checkInputValue(newName)){
+        alert("you have to input proper name");
+        return;
+    }
+
+    let newPrice = document.getElementById("modal-input-price").value;
+    if(!checkInputValue(newPrice)){
+        alert("you have to input proper price");
+        return;
+    }
+
+    let newCatList = [];
+    if(!checkInputValue(document.getElementById("modal-input-cat0").value) &&
+       !checkInputValue(document.getElementById("modal-input-cat1").value) &&
+       !checkInputValue(document.getElementById("modal-input-cat2").value) ){
+        alert("you have to properly input at least 1 category");
+        return;
+    }
+    else{
+        for(let i = 0; i < 3; i++){
+            checkInputValue(document.getElementById("modal-input-cat" + i).value) ?
+            newCatList.push(document.getElementById("modal-input-cat" + i).value) : false;
+        }
+    }
+
+    let updatedItem = {name: newName, price: +newPrice, catList: newCatList};
+    
+    let changesCounter = 0;
+
+    for(field in updatedItem){
+        if(Array.isArray(updatedItem[field])){
+            updatedItem[field].length !== currentEditedItem[field].length ? changesCounter++ : false;
+
+            for(let i = 0; i < updatedItem[field].length; i++){
+                if(updatedItem[field][i] !== currentEditedItem[field][i]){
+                    changesCounter++;
+                }
+            }
+            continue;
+        }
+        if(updatedItem[field] !== currentEditedItem[field]){
+            changesCounter++;
+        }
+    }
+
+    if(changesCounter === 0){
+        alert("nothing changed!");
+        return;
+    }
+
+    else{
+        saveEditedItem(updatedItem);
+    }
+}
+
+const saveEditedItem = (updatedItem) => {
+    
+    storage[storage.indexOf(currentEditedItem)] = updatedItem;
+    alert("item edited");
+
+    document.querySelector(".modal-window-editing-actual-item").remove();
+    document.querySelector(".modal-back").remove();
+    document.getElementById("items-list").innerHTML = "";
+
+    postItem(updatedItem, true, false);
+
+    showAll(1);
+    
+}
+
+const editSelectedItem = (itemName) => {
+    let modal = document.createElement("div");
+    modal.classList.add("modal-window-editing-actual-item");
+    
+    currentEditedItem = null;
+
+    for(item in storage){
+        if(storage[item].name === itemName){
+            currentEditedItem = storage[item];
+        }
+    }
+    
+    modal.innerHTML += `
+    <ul class = "input-panel">
+        <h1>Editing ${itemName}: </h1>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Name (ID): </span>
+            <input type = text class = "modal-input" id = "modal-input-name">
+        </li>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Price: </span>
+            <input type = number min = "0" class = "modal-input" id = "modal-input-price">
+        </li>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Category: </span>
+            <input type = text class = "modal-input category-input" id = "modal-input-cat0">
+        </li>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Category 2 (optional): </span>
+            <input type = text class = "modal-input category-input" id = "modal-input-cat1">
+        </li>
+        <li class = "input-field-set">
+            <span class = "input-field-title">Category 3 (optional): </span>
+            <input type = text class = "modal-input category-input" id = "modal-input-cat2">
+        </li>
+    </ul>
+
+    <div class = "modal-buttons-set">
+        <button class = "modal-button" id = "save-button">
+            Save
+        </button>
+        <button class = "modal-button" id = "cancel-button">
+            Cancel
+        </button>
+    </div>
+
+    `
+    document.querySelector("body").append(modal);
+    document.querySelector(".modal-window-editing-actual-item").addEventListener("click", modalButtonClick);
+
+    document.getElementById("modal-input-name").value = currentEditedItem.name;
+    document.getElementById("modal-input-price").value = currentEditedItem.price;
+
+    document.getElementById("modal-input-cat0").value = currentEditedItem.catList[0];
+    document.getElementById("modal-input-cat1").value = !!currentEditedItem.catList[1] ? currentEditedItem.catList[1] : "";
+    document.getElementById("modal-input-cat2").value = !!currentEditedItem.catList[2] ? currentEditedItem.catList[2] : "";
+    
+} 
+
+const createEditItemButton = () => {
+    let newBut = document.createElement("button");
+    newBut.innerText = "Edit item";
+    newBut.classList.add("edit-item-but");
+    document.getElementById("items-list").innerHTML += newBut.outerHTML;
+    newBut.setAttribute("onclick", "editItemInStorage()");
+
+    return newBut;
+}
+
+const editItemInStorage = () => {
+    createModalWindowEdit("edit");
+}
+
+const createModalWindowEdit = (inputData) => {
+    let modal = document.createElement("div");
+
+    if(inputData === "edit"){
+        modal.classList.add("modal-window-editing-item");
+    }
+    if(inputData === "delete"){
+        modal.classList.add("modal-window-deleting-item");
+    }
+
+    let modalBack = document.createElement("div");
+    modalBack.classList.add("modal-back");
+
+    if(inputData === "edit"){
+        modal.innerHTML += `
+        <h1 class = "edit-modal-header">Select item to edit it</h1>
+    `}
+
+    if(inputData === "delete"){
+        modal.innerHTML += `
+        <h1 class = "edit-modal-header">Select item to delete it</h1>
+    `}
+
+    for(item in storage){
+        modal.innerHTML += createShownElem(item, storage[item].name).outerHTML;
+    }
+
+    modal.innerHTML += `
+    <div class = "modal-buttons-set">
+        <button class = "modal-button" id = "cancel-button">
+            Cancel
+        </button>
+    </div>
+    `
+
+    document.querySelector("body").prepend(modal);
+    document.querySelector("body").prepend(modalBack);
+
+    if(inputData === "edit"){
+        document.querySelector(".modal-window-editing-item").addEventListener("click", modalButtonClick);
+    }
+    if(inputData === "delete"){
+        document.querySelector(".modal-window-deleting-item").addEventListener("click", modalButtonClick);
+    }
+}
+
+const deleteItem = (itemName) => {
+    storage = storage.filter(x => x.name !== itemName);
+
+    document.querySelector(".modal-back").remove();
+    document.querySelector(".modal-window-deleting-item").remove();
+
+    document.getElementById("items-list").innerHTML = "";
+
+    postItem(itemName, false, true);
+
+    showAll(1);
+}
+
+const createShownElem = (items, data) => {
 
     let newLi = document.createElement("li");
+
+    if(!!data){
+        newLi.id = data;
+    }
+
     let newLi_name = document.createElement("span");
     newLi_name.innerHTML += +items+1 + ". " + storage[items].name;
     newLi_name.classList.add("names");
@@ -431,7 +770,7 @@ const writeCats = () => {
 const searchInputHandler = (e) => {
     let arr = [];
     for(item in storage){
-        if(storage[item].name.includes(e.target.value) && e.target.value !== ""){
+        if(storage[item].name.includes(e.target.value) && e.target.value !== "" && e.target.value !== " "){
             arr.push(storage[item]);
         }
     }
@@ -565,5 +904,3 @@ const setCurrentState = (num) => {
 
     checkButtons();
 }
-
-init();
